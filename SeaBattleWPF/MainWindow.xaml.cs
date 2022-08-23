@@ -23,10 +23,16 @@ namespace SeaBattleWPF
         public MainWindow()
         {
             InitializeComponent();
+
             player = new SeaBattle.Player(false);
             PC = new SeaBattle.Player();
             InputClassPC = new SeaBattle.InputClassPC();
             handler = new SeaBattle.Handler(player, PC);
+
+            //var path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            //var pathImage = "\\img\\ship.jpg";
+            //var fullpath = System.IO.Path.Combine(path, pathImage);
+
             Init();
         }
 
@@ -38,6 +44,8 @@ namespace SeaBattleWPF
 
         private const int rangGrid = 11;
         private const int rang = rangGrid-1;
+
+        private Image shipImage;
 
         //Player's fields
         private ColumnDefinition[] columnsPlayer;
@@ -59,24 +67,41 @@ namespace SeaBattleWPF
             for (int i = 0; i < rang; i++)
                 for (int j = 0; j < rang; j++)
                 {
-                    buttonsPlayer[i, j].Content = player.getFieldElement(i, j) == 0 ? "" : player.getFieldElement(i, j) == 1 ? "O" : "X";                    
-                    buttonsPC[i, j].Content = player.getMyMoveElement(i, j) == 0 ? "" : player.getMyMoveElement(i, j) == 1 ? "X" : "*";
-
-                    if(PC.getMyMoveElement(i,j) == 2)
+                    //Display Player Field
+                    if(player.getFieldElement(i,j) == 1)
+                    {                        
+                        buttonsPlayer[i, j].Content = (Image)this.FindResource("shipImage");
+                    }
+                    else if(player.getFieldElement(i,j) == 2)
                     {
-                        buttonsPlayer[i, j].Content = "*";
+                        buttonsPlayer[i, j].Content = (Image)this.FindResource("destroyShipImage");
+                    }
+                    else
+                    {
+                        buttonsPlayer[i, j].Content = "";
+                    }
+
+                    //Display PC Field
+                    if (player.getMyMoveElement(i, j) == 1)
+                    {
+                        buttonsPC[i, j].Content = (Image)this.FindResource("destroyShipImage");
+                    }
+                    else if (player.getMyMoveElement(i, j) == 2)
+                    {
+                        buttonsPC[i, j].Content = (Image)this.FindResource("missImage");
+                    }
+                    else
+                    {
+                        buttonsPC[i, j].Content = "";
+                    }
+
+                    //Modify Player Field
+                    if (PC.getMyMoveElement(i,j) == 2)
+                    {
+                        buttonsPlayer[i, j].Content = (Image)this.FindResource("missImage");
                     }                    
                 }
-        }
-
-        private void ButtonEnabledFalse()
-        {
-            for(int i = 0; i < rang; i++)
-                for(int j = 0; j < rang; j++)
-                {
-                    buttonsPlayer[i, j].IsEnabled = false;
-                }
-        }
+        }//Display
 
         private void Init()
         {
@@ -95,11 +120,11 @@ namespace SeaBattleWPF
 
             for (int i = 0; i < rangGrid; i++)
             {
-                columnsPlayer[i] = new ColumnDefinition();
-                rowsPlayer[i] = new RowDefinition();
+                columnsPlayer[i] = new ColumnDefinition() { Width = new GridLength(9,GridUnitType.Star)};
+                rowsPlayer[i] = new RowDefinition() { Height = new GridLength(9, GridUnitType.Star) };
 
-                columnsPC[i] = new ColumnDefinition();
-                rowsPC[i] = new RowDefinition();
+                columnsPC[i] = new ColumnDefinition() { Width = new GridLength(9, GridUnitType.Star) };
+                rowsPC[i] = new RowDefinition() { Height = new GridLength(9, GridUnitType.Star) };
 
                 GridPlayerField.ColumnDefinitions.Add(columnsPlayer[i]);
                 GridPlayerField.RowDefinitions.Add(rowsPlayer[i]);
@@ -122,23 +147,27 @@ namespace SeaBattleWPF
                 letterLabelsPlayer[i] = new Label() { Content = ((char)('A' + i)).ToString(),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
-                    FontSize = 16
+                    FontSize = 16,
+                    FontWeight = FontWeights.Bold
                 };
                 numberLabelsPLayer[i] = new Label() { Content = i.ToString(),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
-                    FontSize = 16
+                    FontSize = 16, 
+                    FontWeight = FontWeights.Bold                  
                 };
 
                 letterLabelsPC[i] = new Label() { Content = ((char)('A' + i)).ToString(),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
-                    FontSize = 16
+                    FontSize = 16,
+                    FontWeight = FontWeights.Bold
                 };
                 numberLabelsPC[i] = new Label() { Content = i.ToString(),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
-                    FontSize = 16
+                    FontSize = 16,
+                    FontWeight = FontWeights.Bold
                 };
 
                 Grid.SetColumn(letterLabelsPlayer[i], i+1);
@@ -171,6 +200,14 @@ namespace SeaBattleWPF
                     buttonsPlayer[i, j] = new MyButton(i, j); //{ Content = $"{i},{j}"};                   
                     buttonsPC[i, j] = new MyButton(i, j); //{ Content = $"{i},{j}"};
 
+                    buttonsPlayer[i, j].Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#2E92AA");
+                    buttonsPC[i, j].Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#2E92AA");
+
+                    buttonsPlayer[i, j].VerticalAlignment = VerticalAlignment.Stretch;
+                    buttonsPlayer[i, j].HorizontalAlignment = HorizontalAlignment.Stretch;
+                    buttonsPC[i, j].VerticalAlignment = VerticalAlignment.Stretch;
+                    buttonsPC[i, j].HorizontalAlignment = HorizontalAlignment.Stretch;                   
+
                     Grid.SetColumn(buttonsPlayer[i,j], j+1);
                     Grid.SetRow(buttonsPlayer[i,j], i+1);
                     GridPlayerField.Children.Add(buttonsPlayer[i,j]);
@@ -179,8 +216,8 @@ namespace SeaBattleWPF
                     Grid.SetRow(buttonsPC[i, j], i+1);
                     GridPCField.Children.Add(buttonsPC[i, j]);
                 }
-            Display();
-            //ButtonEnabledFalse();
+            this.GridPCField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
+            Display();            
         }//InitButtons         
 
         //Handlers
@@ -194,6 +231,8 @@ namespace SeaBattleWPF
             e.Handled = true;
             player.InitAuto();
             Display();
+            this.GridPCField.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
+            this.GridPlayerField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
             btnAutoFill.IsEnabled = false;
         }
 
@@ -204,6 +243,7 @@ namespace SeaBattleWPF
             PC.InitAuto();
             btnAutoFill.IsEnabled = true;
             this.GridPlayerField.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
+            this.GridPCField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
             Display();
         }
 
@@ -222,6 +262,7 @@ namespace SeaBattleWPF
             if(player.placementShip(btn.I, btn.J))
             {                
                 this.GridPlayerField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
+                this.GridPCField.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
                 btnAutoFill.IsEnabled = false;
             }            
             Display();
@@ -260,7 +301,6 @@ namespace SeaBattleWPF
         }
 
         public int I { get; }
-        public int J { get; }
-        
-    }
-}
+        public int J { get; }        
+    }//class MyButton
+}//namespace SeaBattleWPF

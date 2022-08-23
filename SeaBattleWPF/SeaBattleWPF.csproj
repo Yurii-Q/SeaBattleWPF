@@ -7,4 +7,20 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="img\destroyShip.png" />
+    <None Remove="img\miss.jpg" />
+    <None Remove="img\miss1.jpg" />
+    <None Remove="img\sand.jpg" />
+    <None Remove="img\ship.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="img\destroyShip.png" />
+    <Resource Include="img\miss.jpg" />
+    <Resource Include="img\miss1.jpg" />
+    <Resource Include="img\sand.jpg" />
+    <Resource Include="img\ship.png" />
+  </ItemGroup>
+
 </Project>
