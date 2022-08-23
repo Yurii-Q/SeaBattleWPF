@@ -14,7 +14,15 @@ namespace SeaBattle
         public int iPlayer { get; set; } = -1;
         public int jPlayer { get; set; } = -1;
 
-        public int handler(Player player, Player pc)
+        private Player player;
+        private Player pc;
+        public Handler(Player player, Player pc)
+        {
+            this.player = player;
+            this.pc = pc;
+        }
+
+        public int handler()
         {
             //Player got to ship of PC
             if (pc.getFieldElement(iPlayer, jPlayer) == 1)

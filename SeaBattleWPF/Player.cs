@@ -15,7 +15,7 @@ namespace SeaBattle
         private const int sizeField = 10;
         private const int MaxShips = 10;
 
-        public int numberShips { get; set; } = MaxShips; //Maximal number of ship
+        internal int numberShips { get; set; } = MaxShips; //Maximal number of ship
 
         //0("_") - empty, 1("O") - ship, 2("X") - my ship killed
         private int[,] myField = new int[sizeField, sizeField];
@@ -43,7 +43,8 @@ namespace SeaBattle
         public void setMyMoveElement(int i, int j, int value) { myMoves[i, j] = value; }
 
         //Indecsator for alienField because most often there is an appeal to him 
-        public int this[int i, int j]
+        //For handler
+        internal int this[int i, int j]
         {
             get { return myMoves[i, j]; }
             set { myMoves[i, j] = value; }
@@ -52,8 +53,7 @@ namespace SeaBattle
         public void InitAuto()
         {
             zeroingField();
-            fillMyField();
-            numberShips = 10;
+            AutoPlacmentShip();            
         }        
 
         public void zeroingField()
@@ -69,7 +69,7 @@ namespace SeaBattle
             numberShips = 10;
         }//end zeroingField
 
-        public void ManuallyFill(int i, int j)
+        public bool placementShip(int i, int j)
         {
             if (numberShips != 0)
             {
@@ -83,7 +83,14 @@ namespace SeaBattle
                         {
                             myField[i, j] = 1;
                             numberShips--;
-                            return;
+
+                            if (numberShips != 0)
+                                return false;
+                            else
+                            {
+                                numberShips = 10;
+                                return true;
+                            }
                         }
                     }
                     else if (i == 0 && j == 0)
@@ -92,7 +99,14 @@ namespace SeaBattle
                         {
                             myField[i, j] = 1;
                             numberShips--;
-                            return;
+
+                            if (numberShips != 0)
+                                return false;
+                            else
+                            {
+                                numberShips = 10;
+                                return true;
+                            }
                         }
                     }
                     else if (i == sizeField - 1 && j == sizeField - 1)
@@ -101,7 +115,14 @@ namespace SeaBattle
                         {
                             myField[i, j] = 1;
                             numberShips--;
-                            return;
+
+                            if (numberShips != 0)
+                                return false;
+                            else
+                            {
+                                numberShips = 10;
+                                return true;
+                            }
                         }
                     }
                     else if (i == sizeField - 1 && j == 0)
@@ -110,7 +131,14 @@ namespace SeaBattle
                         {
                             myField[i, j] = 1;
                             numberShips--;
-                            return;
+
+                            if (numberShips != 0)
+                                return false;
+                            else
+                            {
+                                numberShips = 10;
+                                return true;
+                            }
                         }
                     }
                     else if (i == 0 && j == sizeField - 1)
@@ -119,7 +147,14 @@ namespace SeaBattle
                         {
                             myField[i, j] = 1;
                             numberShips--;
-                            return;
+
+                            if (numberShips != 0)
+                                return false;
+                            else
+                            {
+                                numberShips = 10;
+                                return true;
+                            }
                         }
                     }
                     else if (i == 0)
@@ -129,7 +164,14 @@ namespace SeaBattle
                         {
                             myField[i, j] = 1;
                             numberShips--;
-                            return;
+
+                            if (numberShips != 0)
+                                return false;
+                            else
+                            {
+                                numberShips = 10;
+                                return true;
+                            }
                         }
                     }
                     else if (i == sizeField - 1)
@@ -139,7 +181,14 @@ namespace SeaBattle
                         {
                             myField[i, j] = 1;
                             numberShips--;
-                            return;
+
+                            if (numberShips != 0)
+                                return false;
+                            else
+                            {
+                                numberShips = 10;
+                                return true;
+                            }
                         }
                     }
                     else if (j == 0)
@@ -149,7 +198,14 @@ namespace SeaBattle
                         {
                             myField[i, j] = 1;
                             numberShips--;
-                            return;
+
+                            if (numberShips != 0)
+                                return false;
+                            else
+                            {
+                                numberShips = 10;
+                                return true;
+                            }
                         }
                     }
                     else if (j == sizeField - 1)
@@ -159,14 +215,30 @@ namespace SeaBattle
                         {
                             myField[i, j] = 1;
                             numberShips--;
-                            return;
+
+                            if (numberShips != 0)
+                                return false;
+                            else
+                            {
+                                numberShips = 10;
+                                return true;
+                            }                                
                         }
                     }
+                    else
+                    {
+                        return false;
+                    }
                 }
-            }            
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
         }//end ManuallyFill
        
-        private void fillMyField()
+        private void AutoPlacmentShip()
         {
             while (numberShips != 0)
             {
@@ -264,6 +336,7 @@ namespace SeaBattle
                     }
                 }               
             }
+            numberShips = 10;
         }//end fillMyField
     }//end class Player
 }//end namespace SeaBattle

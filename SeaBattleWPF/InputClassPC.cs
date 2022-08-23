@@ -12,14 +12,12 @@ namespace SeaBattle
         int j = -1;
         Random random = new Random();        
 
-        //public int getI() { return i; }
-        //public int getJ() { return j; }
         public void readKeyPC(Player pc, Handler handler)
         { 
             while(true)
             {
                 i = random.Next(10);
-                j = random.Next(10);
+                j = random.Next(10);                
 
                 if (pc.getMyMoveElement(i,j) == 1 || pc.getMyMoveElement(i, j) == 2)
                 {

@@ -26,7 +26,7 @@ namespace SeaBattleWPF
             player = new SeaBattle.Player(false);
             PC = new SeaBattle.Player();
             InputClassPC = new SeaBattle.InputClassPC();
-            handler = new SeaBattle.Handler();
+            handler = new SeaBattle.Handler(player, PC);
             Init();
         }
 
@@ -219,16 +219,11 @@ namespace SeaBattleWPF
             e.Handled = true;
             var btn = e.Source as MyButton;
 
-            if(player.numberShips != 0)
-            {
-                player.ManuallyFill(btn.I, btn.J);                
-            }
-            if(player.numberShips == 0)
-            {
-                player.numberShips = 10;
+            if(player.placementShip(btn.I, btn.J))
+            {                
                 this.GridPlayerField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
                 btnAutoFill.IsEnabled = false;
-            }
+            }            
             Display();
         }
 
@@ -242,7 +237,7 @@ namespace SeaBattleWPF
 
             InputClassPC.readKeyPC(PC, handler);
 
-            int result = handler.handler(player, PC);
+            int result = handler.handler();
             Display();
 
             if(result == 1)
