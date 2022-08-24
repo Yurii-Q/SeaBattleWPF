@@ -108,7 +108,7 @@ namespace SeaBattleWPF
             InitGrids();
             InitCoordinates();
             InitButtons();
-        }//Init
+        }//Init       
         
         private void InitGrids()
         {         
@@ -144,30 +144,27 @@ namespace SeaBattleWPF
 
             for(int i = 0; i < rang; i++)
             {
-                letterLabelsPlayer[i] = new Label() { Content = ((char)('A' + i)).ToString(),
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    FontSize = 16,
-                    FontWeight = FontWeights.Bold
-                };
-                numberLabelsPLayer[i] = new Label() { Content = i.ToString(),
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    FontSize = 16, 
-                    FontWeight = FontWeights.Bold                  
+                letterLabelsPlayer[i] = new Label() 
+                {
+                    Content = ((char)('A' + i)).ToString(),
+                    Style = (Style)this.FindResource("labelStyle")
                 };
 
-                letterLabelsPC[i] = new Label() { Content = ((char)('A' + i)).ToString(),
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    FontSize = 16,
-                    FontWeight = FontWeights.Bold
+                numberLabelsPLayer[i] = new Label() 
+                { 
+                    Content = i.ToString(),
+                    Style = (Style)this.FindResource("labelStyle")
                 };
-                numberLabelsPC[i] = new Label() { Content = i.ToString(),
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    FontSize = 16,
-                    FontWeight = FontWeights.Bold
+
+                letterLabelsPC[i] = new Label() 
+                { 
+                    Content = ((char)('A' + i)).ToString(),
+                    Style = (Style)this.FindResource("labelStyle")
+                };
+                numberLabelsPC[i] = new Label() 
+                { 
+                    Content = i.ToString(),
+                    Style = (Style)this.FindResource("labelStyle")
                 };
 
                 Grid.SetColumn(letterLabelsPlayer[i], i+1);
@@ -200,13 +197,8 @@ namespace SeaBattleWPF
                     buttonsPlayer[i, j] = new MyButton(i, j); //{ Content = $"{i},{j}"};                   
                     buttonsPC[i, j] = new MyButton(i, j); //{ Content = $"{i},{j}"};
 
-                    buttonsPlayer[i, j].Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#2E92AA");
-                    buttonsPC[i, j].Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#2E92AA");
-
-                    buttonsPlayer[i, j].VerticalAlignment = VerticalAlignment.Stretch;
-                    buttonsPlayer[i, j].HorizontalAlignment = HorizontalAlignment.Stretch;
-                    buttonsPC[i, j].VerticalAlignment = VerticalAlignment.Stretch;
-                    buttonsPC[i, j].HorizontalAlignment = HorizontalAlignment.Stretch;                   
+                    buttonsPlayer[i, j].Style = (Style)this.FindResource("btnFieldStyle");
+                    buttonsPC[i, j].Style = (Style)this.FindResource("btnFieldStyle");
 
                     Grid.SetColumn(buttonsPlayer[i,j], j+1);
                     Grid.SetRow(buttonsPlayer[i,j], i+1);
@@ -216,9 +208,28 @@ namespace SeaBattleWPF
                     Grid.SetRow(buttonsPC[i, j], i+1);
                     GridPCField.Children.Add(buttonsPC[i, j]);
                 }
-            this.GridPCField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
+            turnOffButtons(buttonsPC); //this.GridPCField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
             Display();            
-        }//InitButtons         
+        }//InitButtons
+         
+        private void turnOffButtons(Button[,] btn)
+        {
+            for (int i = 0; i < rang; i++)
+                for (int j = 0; j < rang; j++)
+                {
+                    btn[i, j].IsEnabled = false;
+                }
+        }
+
+        private void turnOnButtons(Button[,] btn)
+        {
+            for (int i = 0; i < rang; i++)
+                for (int j = 0; j < rang; j++)
+                {
+                    btn[i, j].IsEnabled = true;
+                }
+        }
+
 
         //Handlers
         private void btnCancel_Click(object sender, RoutedEventArgs e)
@@ -231,8 +242,8 @@ namespace SeaBattleWPF
             e.Handled = true;
             player.InitAuto();
             Display();
-            this.GridPCField.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
-            this.GridPlayerField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
+            turnOnButtons(buttonsPC);//this.GridPCField.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
+            turnOffButtons(buttonsPlayer);//this.GridPlayerField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
             btnAutoFill.IsEnabled = false;
         }
 
@@ -242,8 +253,8 @@ namespace SeaBattleWPF
             player.zeroingField();
             PC.InitAuto();
             btnAutoFill.IsEnabled = true;
-            this.GridPlayerField.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
-            this.GridPCField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
+            turnOnButtons(buttonsPlayer); //this.GridPlayerField.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
+            turnOffButtons(buttonsPC); //this.GridPCField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
             Display();
         }
 
@@ -260,9 +271,9 @@ namespace SeaBattleWPF
             var btn = e.Source as MyButton;
 
             if(player.placementShip(btn.I, btn.J))
-            {                
-                this.GridPlayerField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
-                this.GridPCField.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
+            {
+                turnOffButtons(buttonsPlayer); //this.GridPlayerField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
+                turnOnButtons(buttonsPC); //this.GridPCField.AddHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
                 btnAutoFill.IsEnabled = false;
             }            
             Display();
@@ -284,10 +295,14 @@ namespace SeaBattleWPF
             if(result == 1)
             {
                 MessageBox.Show("You Win!", "You win");
+                turnOffButtons(buttonsPlayer); //this.GridPlayerField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
+                turnOffButtons(buttonsPC); //this.GridPCField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
             }
             else if(result == 2)
             {
                 MessageBox.Show("You Lose!", "You lose");
+                turnOffButtons(buttonsPlayer); //this.GridPlayerField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPlayerField_Click));
+                turnOffButtons(buttonsPC); //this.GridPCField.RemoveHandler(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, new System.Windows.RoutedEventHandler(this.GridPCField_Click));
             }
         }
     }//MainWindow
